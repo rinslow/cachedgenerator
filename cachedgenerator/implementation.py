@@ -2,10 +2,10 @@ import inspect
 
 
 def cachedgenerator(func):
-    def meow(*args, **kwargs):
+    def decorated(*args, **kwargs):
         generator = func(*args, **kwargs)
         return CachedGenerator(generator)
-    return meow
+    return decorated
 
 
 class CachedGenerator:
