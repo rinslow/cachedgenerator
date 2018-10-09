@@ -1,6 +1,3 @@
-import weakref
-
-
 def cachedgenerator(func):
     def decorated(*args, **kwargs):
         generator = func(*args, **kwargs)
@@ -10,24 +7,21 @@ def cachedgenerator(func):
 
 
 class CachedGenerator:
-    so_far = weakref.WeakKeyDictionary()
-    exhausted = weakref.WeakKeyDictionary()
-
     def __init__(self, generator):
         self.generator = generator
-        self.so_far[self] = []
-        self.exhausted[self] = False
+        self.so_far = []
+        self.exhausted = False
 
     def __iter__(self):
-        if self.exhausted[self]:
-            yield from self.so_far[self]
+        if self.exhausted:
+            yield from self.so_far
 
         while True:
             try:
                 next_item = next(self.generator)
-                self.so_far[self].append(next_item)
+                self.so_far.append(next_item)
                 yield next_item
 
             except StopIteration:
-                self.exhausted[self] = True
+                self.exhausted = True
                 break

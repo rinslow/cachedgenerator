@@ -31,6 +31,23 @@ def test_simultaneous_iteration():
         yield 2
         yield 3
 
-    c = zip(a(), a())
+    b = a()
+    c = zip(b, b)
 
     assert list(c) == [(1, 1), (2, 2), (3, 3)]
+
+
+def test_performance_of_simultaneous_iteration():
+    class Stub:
+        calls_counter = 0
+
+    @cachedgenerator
+    def generator_with_side_effect():
+        Stub.calls_counter += 1
+        yield Stub.calls_counter
+
+    g = generator_with_side_effect()
+
+    c = zip(g, g)
+
+    assert list(c) == [(1, 1)]
